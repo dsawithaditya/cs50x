@@ -1,0 +1,22 @@
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask session files
+flask_session/
+
+# Uploaded files
+static/uploads/*
+!static/uploads/.gitkeep
+
+# SQLite database local testing copies (keep classconnect.db if part of project or leave as is)
+# Instance folder
+instance/
+.pytest_cache/

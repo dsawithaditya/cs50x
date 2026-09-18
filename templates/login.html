@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center pt-md-4">
+    <div class="col-md-6 col-lg-5 col-xl-4">
+        <div class="card shadow-sm border-0 mt-3 p-2">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-emerald-subtle p-3 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-fill-lock text-emerald" viewBox="0 0 16 16">
+                            <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693Q9.077 9.038 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>
+                        </svg>
+                    </div>
+                    <h3 class="fw-bold mb-1">Welcome Back</h3>
+                    <p class="text-muted small">Sign in to your ClassConnect account</p>
+                </div>
+
+                <form action="/login" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input autocomplete="off" autofocus class="form-control" id="username" name="username" placeholder="Enter your username" type="text" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input class="form-control" id="password" name="password" placeholder="Enter your password" type="password" required>
+                    </div>
+                    <button class="btn btn-primary w-100 py-2 shadow-sm" type="submit">Log In</button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <small class="text-muted">Don't have an account? <a href="/register" class="fw-semibold text-emerald text-decoration-none">Register</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

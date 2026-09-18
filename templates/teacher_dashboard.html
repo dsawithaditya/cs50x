@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <h2 class="fw-bold mb-1">Teacher Dashboard</h2>
+        <p class="text-muted mb-0 small">Manage your teaching classes, student attendance, and course broadcasts.</p>
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#createClassModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
+            </svg>
+            <span>+ Create Class</span>
+        </button>
+    </div>
+</div>
+
+<!-- Create Class Modal -->
+<div class="modal fade" id="createClassModal" tabindex="-1" aria-labelledby="createClassModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0">
+      <form action="/create_class" method="post">
+          <div class="modal-header">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle bg-emerald-subtle p-2 text-emerald d-inline-flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-journal-plus" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+                        <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"/>
+                        <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"/>
+                    </svg>
+                </div>
+                <h5 class="modal-title fw-bold mb-0" id="createClassModalLabel">Create a New Class</h5>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="row g-3">
+                <!-- Class Name -->
+                <div class="col-md-7">
+                    <label for="class_name" class="form-label fw-semibold">Class / Course Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="class_name" name="class_name" placeholder="e.g. CS50 Intro to Computer Science" required autofocus>
+                </div>
+                <!-- Subject -->
+                <div class="col-md-5">
+                    <label for="subject" class="form-label fw-semibold">Subject / Discipline</label>
+                    <input type="text" class="form-control" id="subject" name="subject" placeholder="e.g. Computer Science / AI">
+                </div>
+
+                <!-- Semester -->
+                <div class="col-md-6">
+                    <label for="semester" class="form-label fw-semibold">Semester / Term</label>
+                    <select class="form-select" id="semester" name="semester">
+                        <option value="" selected>Select Semester (Optional)</option>
+                        <option value="Semester 1">Semester 1 (Autumn / Fall)</option>
+                        <option value="Semester 2">Semester 2 (Spring)</option>
+                        <option value="Semester 3">Semester 3</option>
+                        <option value="Semester 4">Semester 4</option>
+                        <option value="Semester 5">Semester 5</option>
+                        <option value="Semester 6">Semester 6</option>
+                        <option value="Semester 7">Semester 7</option>
+                        <option value="Semester 8">Semester 8</option>
+                    </select>
+                </div>
+
+                <!-- Academic Year (Auto-filled by default) -->
+                <div class="col-md-6">
+                    <label for="academic_year" class="form-label fw-semibold">Academic Year</label>
+                    <input type="text" class="form-control" id="academic_year" name="academic_year" value="{{ default_academic_year }}" placeholder="e.g. 2026-2027">
+                    <div class="form-text small">Auto-populated with the current academic year.</div>
+                </div>
+
+                <!-- Date Created (Auto-filled by default) -->
+                <div class="col-md-4">
+                    <label for="created_at" class="form-label fw-semibold">Date of Creation</label>
+                    <input type="date" class="form-control" id="created_at" name="created_at" value="{{ default_date }}">
+                </div>
+
+                <!-- Section / Division -->
+                <div class="col-md-4">
+                    <label for="section" class="form-label fw-semibold">Section / Group</label>
+                    <input type="text" class="form-control" id="section" name="section" placeholder="e.g. Section A / Batch 1">
+                </div>
+
+                <!-- Room / Hall -->
+                <div class="col-md-4">
+                    <label for="room" class="form-label fw-semibold">Room / Lab No.</label>
+                    <input type="text" class="form-control" id="room" name="room" placeholder="e.g. Lab 3 / Room 102">
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary px-4">Create Class</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Class Cards Grid -->
+<div class="row">
+    {% for c in classes %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm hover-shadow transition d-flex flex-column">
+            <div class="card-body p-4 flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    {% if c.subject %}
+                        <span class="badge bg-emerald-subtle text-emerald rounded-pill px-2.5 py-1 small fw-semibold">{{ c.subject }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary bg-opacity-25 text-body rounded-pill px-2.5 py-1 small">Course</span>
+                    {% endif %}
+                    
+                    {% if c.semester %}
+                        <span class="badge bg-light border text-muted rounded-pill px-2 py-1 small">{{ c.semester }}</span>
+                    {% endif %}
+                </div>
+
+                <h4 class="card-title fw-bold mb-1">{{ c.name }}</h4>
+
+                <div class="d-flex flex-wrap gap-2 text-muted small my-2">
+                    {% if c.academic_year %}
+                        <span>📅 {{ c.academic_year }}</span>
+                    {% endif %}
+                    {% if c.section %}
+                        <span>• 🏷️ {{ c.section }}</span>
+                    {% endif %}
+                    {% if c.room %}
+                        <span>• 📍 {{ c.room }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="p-2.5 rounded-3 bg-light bg-opacity-50 border border-light-subtle my-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-semibold">Join Code:</span>
+                        <code class="fs-6 fw-bold text-emerald user-select-all">{{ c.join_code }}</code>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center text-muted small mb-1">
+                    <span>👥 <strong>{{ c.student_count or 0 }}</strong> Enrolled Students</span>
+                    {% if c.created_at %}
+                        <span title="Created on"><small>{{ c.created_at[:10] }}</small></span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4 d-flex gap-2">
+                <a href="/class/{{ c.id }}" class="btn btn-outline-primary btn-sm flex-grow-1">View Class</a>
+                <a href="/class/{{ c.id }}/attendance" class="btn btn-secondary btn-sm flex-grow-1">Attendance</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center text-muted my-5 py-5">
+        <div class="mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-journal-x opacity-50" viewBox="0 0 16 16">
+                <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708z"/>
+                <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"/>
+                <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"/>
+            </svg>
+        </div>
+        <h5 class="fw-semibold">No Classes Created Yet</h5>
+        <p class="small text-muted">Click "+ Create Class" above to set up your first subject and start inviting students.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

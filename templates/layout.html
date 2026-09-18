@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassConnect</title>
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Immediate theme initializer to avoid flash of wrong theme -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body class="apple-glass-theme">
+
+    <!-- Ambient background glows for Apple-like translucent depth -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Floating Capsule Navbar Wrapper -->
+    <div class="navbar-wrapper sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-dark floating-capsule-navbar">
+            <div class="container-fluid px-2 px-md-3">
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+                    <!-- Staggered 3-pill bars logo matching reference -->
+                    <span class="brand-capsule-bars" aria-hidden="true">
+                        <span class="c-bar bar-1"></span>
+                        <span class="c-bar bar-2"></span>
+                        <span class="c-bar bar-3"></span>
+                    </span>
+                    <span class="brand-name">ClassConnect</span>
+                    {% if session.get('role') %}
+                        <span class="badge role-pill-badge">{{ session.get('role') }}</span>
+                    {% endif %}
+                </a>
+                
+                <button class="navbar-toggler custom-nav-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    {% if session.get('user_id') %}
+                    <!-- Main Navigation Menu -->
+                    <ul class="navbar-nav me-auto ms-lg-3 gap-1 align-items-lg-center">
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill-link d-flex align-items-center gap-1.5" href="/">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-grid-fill" viewBox="0 0 16 16">
+                                    <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5z"/>
+                                </svg>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-pill-link d-flex align-items-center gap-1.5" href="/announcements">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-megaphone-fill" viewBox="0 0 16 16">
+                                    <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49a68 68 0 0 1-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 75 75 0 0 1 2.483-.075c3.043-.154 6.148-.849 8.525-2.199V2.5zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0zm-4.198 6.841c2.815.611 5.462 1.59 7.198 2.588V4.07c-1.735.998-4.382 1.976-7.198 2.588l-.572-3.828a2 2 0 0 0-.585-.015L8 9.356l.802-.015z"/>
+                                </svg>
+                                <span>Announcements</span>
+                            </a>
+                        </li>
+                    </ul>
+                    {% endif %}
+
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                        {% if session.get('user_id') %}
+                            <!-- User Profile Dropdown Menu -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle nav-pill-link user-pill-btn d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="user-avatar-badge">
+                                        {{ session.get('username')[0]|upper }}
+                                    </span>
+                                    <span class="user-name-text">{{ session.get('username') }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end glass-dropdown shadow-lg border-0">
+                                    <li>
+                                        <div class="px-3 py-2 text-muted border-bottom border-light-subtle mb-1">
+                                            <small class="d-block text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">Signed in as</small>
+                                            <div class="fw-semibold text-body text-truncate">{{ session.get('username') }}</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" href="/profile">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill text-emerald" viewBox="0 0 16 16">
+                                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                                            </svg>
+                                            <span>My Profile</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="/logout">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                                            </svg>
+                                            <span>Log Out</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link nav-pill-link" href="/login">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-pill-link" href="/login">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-pill-link" href="/login">Contact</a>
+                            </li>
+                            <li class="nav-item ms-lg-2">
+                                <a class="btn btn-capsule-light btn-sm px-3" href="/login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-capsule-emerald btn-sm px-3" href="/register">Register</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item ms-lg-1">
+                            <button type="button" class="theme-toggle-btn" onclick="toggleTheme()" id="theme-icon" aria-label="Toggle Theme" title="Toggle theme">
+                                <!-- Populated dynamically by script.js -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon-stars-fill" viewBox="0 0 16 16">
+                                    <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content Container with Glass Backdrop Integration -->
+    <main class="container main-content-wrapper mt-3 mb-5">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-glass alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

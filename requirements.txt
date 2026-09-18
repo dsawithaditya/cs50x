@@ -1,0 +1,4 @@
+Flask>=3.0.0
+Flask-Session>=0.8.0
+cs50>=9.3.0
+Werkzeug>=3.0.0
