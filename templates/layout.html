@@ -144,16 +144,15 @@
     <!-- Main Content Container with Glass Backdrop Integration -->
     <main class="container main-content-wrapper mt-3 mb-5">
         <!-- Flash messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-glass alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        {% set messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for item in messages %}
+                <div class="alert alert-glass alert-{{ 'danger' if item[0] == 'error' else item[0] }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ item[1] }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
 
         {% block content %}{% endblock %}
     </main>

@@ -26,7 +26,7 @@
                 <div class="d-flex align-items-center gap-2 text-muted small">
                     <span>Join Code: <code class="fs-6 fw-bold text-emerald user-select-all">{{ class_info.join_code }}</code></span>
                     {% if class_info.created_at %}
-                        <span>• Created: {{ class_info.created_at[:10] }}</span>
+                        <span>• Created: {{ class_info.created_at|truncate(10, true, "") }}</span>
                     {% endif %}
                 </div>
             </div>
