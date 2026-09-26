@@ -65,24 +65,35 @@ During the development of ClassConnect, several architectural and design trade-o
 
 ### How to Run Locally
 
-1. **Clone the repository & navigate into the project directory**:
+You can run ClassConnect using either the provided Python backend or the Node.js alternative backend.
+
+#### Option A: Running with Node.js (Recommended)
+1. **Ensure Node.js is installed**.
+2. **Install dependencies**:
    ```bash
-   cd cs50_final_project
+   npm install
+   ```
+3. **Start the server**:
+   Run the batch script (Windows) or start manually:
+   ```bash
+   .\run_node.bat
+   # OR
+   node server.js
    ```
 
-2. **Install Python dependencies**:
+#### Option B: Running with Python
+1. **Ensure Python 3 is installed**.
+2. **Install dependencies**:
    ```bash
-   pip install flask flask-session cs50 werkzeug
+   pip install -r requirements.txt
    ```
-
-3. **Start the Flask development server**:
+3. **Start the server**:
+   Run the batch script (Windows) or start manually:
    ```bash
+   .\run.bat
+   # OR
    flask run
    ```
-   *or*
-   ```bash
-   python app.py
-   ```
 
-4. **Access the application**:
-   Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your web browser.
+**Access the application**:
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your web browser.
