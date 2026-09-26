@@ -4,10 +4,10 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
     <div>
         <h2 class="fw-bold mb-1">Teacher Dashboard</h2>
-        <p class="text-muted mb-0 small">Manage your teaching classes, student attendance, and course broadcasts.</p>
+        <p class="text-muted mb-0 small">Manage your teaching classes, grade assignments, and organize daily lectures.</p>
     </div>
     <div>
-        <button type="button" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#createClassModal">
+        <button type="button" class="btn btn-capsule-emerald d-flex align-items-center gap-2 shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#createClassModal">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
             </svg>
@@ -16,44 +16,133 @@
     </div>
 </div>
 
+<!-- Quick Stats Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="user-avatar-badge bg-primary text-white" style="width: 44px; height: 44px; font-size: 1.2rem;">
+                    🏫
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold text-body">{{ stats.total_classes }}</div>
+                    <div class="text-muted small">Active Classrooms</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="user-avatar-badge bg-warning text-dark" style="width: 44px; height: 44px; font-size: 1.2rem;">
+                    📝
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold text-body">{{ stats.pending_grading }}</div>
+                    <div class="text-muted small">Submissions Awaiting Grading</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 p-3 h-100">
+            <div class="d-flex align-items-center gap-3">
+                <div class="user-avatar-badge bg-success text-white" style="width: 44px; height: 44px; font-size: 1.2rem;">
+                    ⏰
+                </div>
+                <div>
+                    <div class="fs-4 fw-bold text-body">{{ stats.today_slots }}</div>
+                    <div class="text-muted small">Lectures Today ({{ current_day }})</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if pending_submissions or today_schedule %}
+<div class="row g-4 mb-4">
+    <!-- Today's Lecture Schedule -->
+    {% if today_schedule %}
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-transparent fw-bold d-flex justify-content-between align-items-center">
+                <span>🗓️ Today's Lectures ({{ current_day }})</span>
+                <a href="/timetable" class="btn btn-link btn-sm text-emerald p-0 text-decoration-none">Full Timetable</a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for s in today_schedule %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <div>
+                            <a href="/class/{{ s.class_id }}" class="fw-bold text-body text-decoration-none">{{ s.class_name }}</a>
+                            <div class="text-muted small">📍 {{ s.room_override or s.room or 'Main Room' }} • {{ s.subject or '' }}</div>
+                        </div>
+                        <span class="badge bg-emerald-subtle text-emerald rounded-pill px-3 py-1.5 fw-semibold">⏰ {{ s.start_time }} - {{ s.end_time }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Pending Submissions to Grade -->
+    {% if pending_submissions %}
+    <div class="{% if today_schedule %}col-lg-6{% else %}col-12{% endif %}">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-transparent fw-bold">
+                <span>⚡ Submissions to Grade</span>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for sub in pending_submissions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <div>
+                            <div class="fw-semibold text-body">{{ sub.student_name or sub.student_username }}</div>
+                            <small class="text-muted">{{ sub.class_name }} • {{ sub.assignment_title }}</small>
+                        </div>
+                        <a href="/assignment/{{ sub.assignment_id }}" class="btn btn-sm btn-outline-emerald rounded-pill px-3">Grade Now</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
 <!-- Create Class Modal -->
 <div class="modal fade" id="createClassModal" tabindex="-1" aria-labelledby="createClassModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content border-0">
+    <div class="modal-content glass-dropdown border">
       <form action="/create_class" method="post">
-          <div class="modal-header">
+          <div class="modal-header border-0 pb-0">
             <div class="d-flex align-items-center gap-2">
-                <div class="rounded-circle bg-emerald-subtle p-2 text-emerald d-inline-flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-journal-plus" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
-                        <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"/>
-                        <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"/>
-                    </svg>
+                <div class="user-avatar-badge" style="width: 36px; height: 36px;">
+                    🏫
                 </div>
-                <h5 class="modal-title fw-bold mb-0" id="createClassModalLabel">Create a New Class</h5>
+                <h5 class="modal-title fw-bold mb-0" id="createClassModalLabel">Create a New Classroom</h5>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4">
             <div class="row g-3">
-                <!-- Class Name -->
                 <div class="col-md-7">
                     <label for="class_name" class="form-label fw-semibold">Class / Course Title <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="class_name" name="class_name" placeholder="e.g. CS50 Intro to Computer Science" required autofocus>
+                    <input type="text" class="form-control rounded-3" id="class_name" name="class_name" placeholder="e.g. CS50 Intro to Computer Science" required autofocus>
                 </div>
-                <!-- Subject -->
                 <div class="col-md-5">
                     <label for="subject" class="form-label fw-semibold">Subject / Discipline</label>
-                    <input type="text" class="form-control" id="subject" name="subject" placeholder="e.g. Computer Science / AI">
+                    <input type="text" class="form-control rounded-3" id="subject" name="subject" placeholder="e.g. Computer Science / AI">
                 </div>
 
-                <!-- Semester -->
                 <div class="col-md-6">
                     <label for="semester" class="form-label fw-semibold">Semester / Term</label>
-                    <select class="form-select" id="semester" name="semester">
+                    <select class="form-select rounded-3" id="semester" name="semester">
                         <option value="" selected>Select Semester (Optional)</option>
-                        <option value="Semester 1">Semester 1 (Autumn / Fall)</option>
-                        <option value="Semester 2">Semester 2 (Spring)</option>
+                        <option value="Semester 1">Semester 1</option>
+                        <option value="Semester 2">Semester 2</option>
                         <option value="Semester 3">Semester 3</option>
                         <option value="Semester 4">Semester 4</option>
                         <option value="Semester 5">Semester 5</option>
@@ -63,46 +152,43 @@
                     </select>
                 </div>
 
-                <!-- Academic Year (Auto-filled by default) -->
                 <div class="col-md-6">
                     <label for="academic_year" class="form-label fw-semibold">Academic Year</label>
-                    <input type="text" class="form-control" id="academic_year" name="academic_year" value="{{ default_academic_year }}" placeholder="e.g. 2026-2027">
-                    <div class="form-text small">Auto-populated with the current academic year.</div>
+                    <input type="text" class="form-control rounded-3" id="academic_year" name="academic_year" value="{{ default_academic_year }}" placeholder="e.g. 2026-2027">
                 </div>
 
-                <!-- Date Created (Auto-filled by default) -->
                 <div class="col-md-4">
                     <label for="created_at" class="form-label fw-semibold">Date of Creation</label>
-                    <input type="date" class="form-control" id="created_at" name="created_at" value="{{ default_date }}">
+                    <input type="date" class="form-control rounded-3" id="created_at" name="created_at" value="{{ default_date }}">
                 </div>
 
-                <!-- Section / Division -->
                 <div class="col-md-4">
                     <label for="section" class="form-label fw-semibold">Section / Group</label>
-                    <input type="text" class="form-control" id="section" name="section" placeholder="e.g. Section A / Batch 1">
+                    <input type="text" class="form-control rounded-3" id="section" name="section" placeholder="e.g. Section A">
                 </div>
 
-                <!-- Room / Hall -->
                 <div class="col-md-4">
                     <label for="room" class="form-label fw-semibold">Room / Lab No.</label>
-                    <input type="text" class="form-control" id="room" name="room" placeholder="e.g. Lab 3 / Room 102">
+                    <input type="text" class="form-control rounded-3" id="room" name="room" placeholder="e.g. Room 102">
                 </div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary px-4">Create Class</button>
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-capsule-emerald px-4">Create Class</button>
           </div>
       </form>
     </div>
   </div>
 </div>
 
+<h4 class="fw-bold mb-3">Your Classes</h4>
+
 <!-- Class Cards Grid -->
-<div class="row">
+<div class="row g-4">
     {% for c in classes %}
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm hover-shadow transition d-flex flex-column">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm hover-shadow transition d-flex flex-column border-0">
             <div class="card-body p-4 flex-grow-1">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     {% if c.subject %}
@@ -112,11 +198,13 @@
                     {% endif %}
                     
                     {% if c.semester %}
-                        <span class="badge bg-light border text-muted rounded-pill px-2 py-1 small">{{ c.semester }}</span>
+                        <span class="badge bg-body-secondary border text-muted rounded-pill px-2.5 py-1 small">{{ c.semester }}</span>
                     {% endif %}
                 </div>
 
-                <h4 class="card-title fw-bold mb-1">{{ c.name }}</h4>
+                <h4 class="card-title fw-bold mb-1">
+                    <a href="/class/{{ c.id }}" class="text-body text-decoration-none">{{ c.name }}</a>
+                </h4>
 
                 <div class="d-flex flex-wrap gap-2 text-muted small my-2">
                     {% if c.academic_year %}
@@ -130,11 +218,9 @@
                     {% endif %}
                 </div>
 
-                <div class="p-2.5 rounded-3 bg-light bg-opacity-50 border border-light-subtle my-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-muted small fw-semibold">Join Code:</span>
-                        <code class="fs-6 fw-bold text-emerald user-select-all">{{ c.join_code }}</code>
-                    </div>
+                <div class="join-code-box my-3">
+                    <span class="join-code-label">Join Code</span>
+                    <span class="join-code-value">{{ c.join_code }}</span>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center text-muted small mb-1">
@@ -146,20 +232,14 @@
             </div>
             
             <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-4 d-flex gap-2">
-                <a href="/class/{{ c.id }}" class="btn btn-outline-primary btn-sm flex-grow-1">View Class</a>
-                <a href="/class/{{ c.id }}/attendance" class="btn btn-secondary btn-sm flex-grow-1">Attendance</a>
+                <a href="/class/{{ c.id }}" class="btn btn-outline-emerald btn-sm flex-grow-1 rounded-pill">Open Class</a>
+                <a href="/class/{{ c.id }}/attendance" class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill">Attendance</a>
             </div>
         </div>
     </div>
     {% else %}
     <div class="col-12 text-center text-muted my-5 py-5">
-        <div class="mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-journal-x opacity-50" viewBox="0 0 16 16">
-                <path d="M6.146 6.146a.5.5 0 0 1 .708 0L8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 0 1 0-.708z"/>
-                <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"/>
-                <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"/>
-            </svg>
-        </div>
+        <div class="fs-1 mb-2">🏫</div>
         <h5 class="fw-semibold">No Classes Created Yet</h5>
         <p class="small text-muted">Click "+ Create Class" above to set up your first subject and start inviting students.</p>
     </div>

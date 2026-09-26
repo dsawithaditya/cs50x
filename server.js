@@ -165,7 +165,7 @@ app.get('/', loginRequired, (req, res) => {
 // Login
 app.get('/login', (req, res) => {
   if (req.session.user_id) {
-    req.session.destroy(() => {});
+    req.session.destroy(() => { });
   }
   res.render('login.html');
 });
@@ -260,6 +260,39 @@ app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login');
   });
+});
+
+// Forgot Password
+app.get('/forgot_password', (req, res) => {
+  res.render('forgot_password.html');
+});
+
+app.post('/forgot_password', (req, res) => {
+  const { username, role, new_password, confirmation } = req.body;
+  if (!username || !role || !new_password || !confirmation) {
+    req.flash('warning', 'All fields are required.');
+    return res.redirect('/forgot_password');
+  }
+  if (new_password !== confirmation) {
+    req.flash('warning', 'Passwords do not match.');
+    return res.redirect('/forgot_password');
+  }
+  if (!['teacher', 'student'].includes(role)) {
+    req.flash('danger', 'Please select a valid account role.');
+    return res.redirect('/forgot_password');
+  }
+
+  const user = db.prepare('SELECT * FROM users WHERE username = ? AND role = ?').get(username.trim(), role);
+  if (!user) {
+    req.flash('danger', 'No matching account found with that username and role.');
+    return res.redirect('/forgot_password');
+  }
+
+  const hash = generatePasswordHash(new_password);
+  db.prepare('UPDATE users SET hash = ? WHERE id = ?').run(hash, user.id);
+
+  req.flash('success', 'Password reset successfully! Please log in with your new password.');
+  return res.redirect('/login');
 });
 
 // Create Class (Teacher)

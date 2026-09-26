@@ -1,0 +1,192 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Faculty Directory</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-0">Faculty Directory</h2>
+        <small class="text-muted">College staff contact information and cabin details.</small>
+    </div>
+    {% if session.role == 'teacher' %}
+    <button class="btn btn-capsule-emerald px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addFacultyModal">
+        + Add Faculty
+    </button>
+    {% endif %}
+</div>
+
+<!-- Search bar -->
+<div class="mb-4">
+    <input type="text" id="facultySearch" class="form-control rounded-3 shadow-sm" placeholder="Search by name, subject, email...">
+</div>
+
+<!-- Faculty Table -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="facultyTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4 py-3 fw-semibold text-muted" style="width:22%">Name</th>
+                        <th class="py-3 fw-semibold text-muted" style="width:18%">Subject / Dept</th>
+                        <th class="py-3 fw-semibold text-muted" style="width:15%">Phone</th>
+                        <th class="py-3 fw-semibold text-muted" style="width:12%">Cabinet No.</th>
+                        <th class="py-3 fw-semibold text-muted" style="width:22%">Email</th>
+                        {% if session.role == 'teacher' %}
+                        <th class="py-3 fw-semibold text-muted text-end pe-4" style="width:11%">Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in entries %}
+                    <!-- View row -->
+                    <tr class="faculty-row" id="row-view-{{ e.id }}">
+                        <td class="ps-4 py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="user-avatar-badge bg-primary text-white" style="width:34px;height:34px;font-size:0.9rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    {{ e.name[0]|upper }}
+                                </div>
+                                <span class="fw-semibold">{{ e.name }}</span>
+                            </div>
+                        </td>
+                        <td class="py-3">
+                            {% if e.subject %}<span class="badge bg-emerald-subtle text-emerald rounded-pill px-2">{{ e.subject }}</span>{% else %}<span class="text-muted small">—</span>{% endif %}
+                        </td>
+                        <td class="py-3">{{ e.phone or '—' }}</td>
+                        <td class="py-3">{{ e.cabinet or '—' }}</td>
+                        <td class="py-3">
+                            {% if e.email %}<a href="mailto:{{ e.email }}" class="text-decoration-none text-body">{{ e.email }}</a>{% else %}—{% endif %}
+                        </td>
+                        {% if session.role == 'teacher' %}
+                        <td class="py-3 text-end pe-4">
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-2 me-1" onclick="startEdit({{ e.id }})">Edit</button>
+                            <form action="/faculty/delete/{{ e.id }}" method="post" class="d-inline" onsubmit="return confirm('Remove this entry?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2">Del</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    <!-- Edit row (hidden by default) -->
+                    {% if session.role == 'teacher' %}
+                    <tr id="row-edit-{{ e.id }}" style="display:none;background:var(--bs-light);">
+                        <td colspan="6" class="px-4 py-3">
+                            <form action="/faculty/edit/{{ e.id }}" method="post">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label form-label-sm fw-semibold mb-1">Name *</label>
+                                        <input type="text" name="name" value="{{ e.name }}" class="form-control form-control-sm rounded-3" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label form-label-sm fw-semibold mb-1">Subject / Dept</label>
+                                        <input type="text" name="subject" value="{{ e.subject or '' }}" class="form-control form-control-sm rounded-3">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label form-label-sm fw-semibold mb-1">Phone</label>
+                                        <input type="text" name="phone" value="{{ e.phone or '' }}" class="form-control form-control-sm rounded-3">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label class="form-label form-label-sm fw-semibold mb-1">Cabinet</label>
+                                        <input type="text" name="cabinet" value="{{ e.cabinet or '' }}" class="form-control form-control-sm rounded-3">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label form-label-sm fw-semibold mb-1">Email</label>
+                                        <input type="email" name="email" value="{{ e.email or '' }}" class="form-control form-control-sm rounded-3">
+                                    </div>
+                                    <div class="col-md-1 d-flex gap-1">
+                                        <button type="submit" class="btn btn-sm btn-capsule-emerald px-2">Save</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary px-2" onclick="cancelEdit({{ e.id }})">X</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% else %}
+                    <tr>
+                        <td colspan="{% if session.role == 'teacher' %}6{% else %}5{% endif %}" class="text-center text-muted py-5">
+                            <div class="fs-4 mb-2">👨‍🏫</div>
+                            <div class="fw-semibold">No faculty members listed yet.</div>
+                            {% if session.role == 'teacher' %}
+                            <small>Click "+ Add Faculty" to add the first entry.</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Faculty Modal -->
+{% if session.role == 'teacher' %}
+<div class="modal fade" id="addFacultyModal" tabindex="-1" aria-labelledby="addFacultyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content glass-dropdown border">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="addFacultyModalLabel">Add Faculty Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/faculty/add" method="post">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control rounded-3" placeholder="e.g. Dr. Ravi Kumar" required autofocus>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Subject / Department</label>
+                            <input type="text" name="subject" class="form-control rounded-3" placeholder="e.g. Mathematics, CSE">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="text" name="phone" class="form-control rounded-3" placeholder="e.g. 9876543210">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Cabinet / Room No.</label>
+                            <input type="text" name="cabinet" class="form-control rounded-3" placeholder="e.g. C-204">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" name="email" class="form-control rounded-3" placeholder="e.g. ravi@college.edu">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-capsule-emerald px-4">Add to Directory</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function startEdit(id) {
+    document.getElementById('row-view-' + id).style.display = 'none';
+    document.getElementById('row-edit-' + id).style.display = '';
+}
+function cancelEdit(id) {
+    document.getElementById('row-edit-' + id).style.display = 'none';
+    document.getElementById('row-view-' + id).style.display = '';
+}
+
+// Live search
+document.getElementById('facultySearch').addEventListener('input', function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll('.faculty-row').forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+        // Also hide its paired edit row when searching
+        var editRowId = row.id.replace('row-view-', 'row-edit-');
+        var editRow = document.getElementById(editRowId);
+        if (editRow) editRow.style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

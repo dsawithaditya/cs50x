@@ -127,7 +127,7 @@ def test_cs50_scratch():
     assert custom_block_found, "No custom block taking at least one input found"
     print("PASS: Uses custom block with at least one input")
 
-    print("\nALL CS50 SCRATCH CHECKS PASSED WITH FLYING COLORS! 🚀")
+    print("\nALL CS50 SCRATCH CHECKS PASSED WITH FLYING COLORS!")
 
 if __name__ == "__main__":
     test_cs50_scratch()

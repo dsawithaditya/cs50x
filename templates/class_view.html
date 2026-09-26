@@ -1,120 +1,874 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="card shadow-sm border-0 mb-4 p-3">
+<!-- Class Header Card -->
+<div class="card shadow-sm border-0 mb-4 p-3 glass-card">
     <div class="card-body p-2">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                     {% if class_info.subject %}
-                        <span class="badge bg-emerald-subtle text-emerald rounded-pill px-3 py-1 fw-semibold">{{ class_info.subject }}</span>
+                    <span class="badge bg-emerald-subtle text-emerald rounded-pill px-3 py-1 fw-semibold">{{
+                        class_info.subject }}</span>
                     {% endif %}
                     {% if class_info.semester %}
-                        <span class="badge bg-light border text-muted rounded-pill px-2.5 py-1">{{ class_info.semester }}</span>
+                    <span class="badge bg-body-secondary border text-muted rounded-pill px-2.5 py-1">{{
+                        class_info.semester }}</span>
                     {% endif %}
                     {% if class_info.academic_year %}
-                        <span class="badge bg-light border text-muted rounded-pill px-2.5 py-1">📅 {{ class_info.academic_year }}</span>
+                    <span class="badge bg-body-secondary border text-muted rounded-pill px-2.5 py-1">📅 {{
+                        class_info.academic_year }}</span>
                     {% endif %}
                     {% if class_info.section %}
-                        <span class="badge bg-light border text-muted rounded-pill px-2.5 py-1">🏷️ {{ class_info.section }}</span>
+                    <span class="badge bg-body-secondary border text-muted rounded-pill px-2.5 py-1">🏷️ Section {{
+                        class_info.section }}</span>
                     {% endif %}
                     {% if class_info.room %}
-                        <span class="badge bg-light border text-muted rounded-pill px-2.5 py-1">📍 {{ class_info.room }}</span>
+                    <span class="badge bg-body-secondary border text-muted rounded-pill px-2.5 py-1">📍 Room {{
+                        class_info.room }}</span>
                     {% endif %}
                 </div>
                 <h2 class="fw-bold mb-1">{{ class_info.name }}</h2>
-                <div class="d-flex align-items-center gap-2 text-muted small">
-                    <span>Join Code: <code class="fs-6 fw-bold text-emerald user-select-all">{{ class_info.join_code }}</code></span>
+                <div class="d-flex flex-wrap align-items-center gap-3 text-muted small">
+                    <span>Join Code: <code
+                            class="fs-6 fw-bold text-emerald user-select-all">{{ class_info.join_code }}</code></span>
+                    <span>• {{ students|length }} Students</span>
                     {% if class_info.created_at %}
-                        <span>• Created: {{ class_info.created_at|truncate(10, true, "") }}</span>
+                    <span>• Created: {{ class_info.created_at|truncate(10, true, "") }}</span>
                     {% endif %}
                 </div>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex flex-wrap gap-2">
                 {% if session.role == 'teacher' %}
-                <a href="/class/{{ class_info.id }}/attendance" class="btn btn-primary d-flex align-items-center gap-1.5 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-check-fill" viewBox="0 0 16 16">
-                        <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-5.146-5.146-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
-                    </svg>
+                <a href="/class/{{ class_info.id }}/attendance"
+                    class="btn btn-capsule-emerald btn-sm px-3 d-flex align-items-center gap-1.5 shadow-sm">
                     <span>Take Attendance</span>
                 </a>
                 {% else %}
-                <a href="/class/{{ class_info.id }}/my_attendance" class="btn btn-primary d-flex align-items-center gap-1.5 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                <a href="/class/{{ class_info.id }}/my_attendance"
+                    class="btn btn-capsule-emerald btn-sm px-3 d-flex align-items-center gap-1.5 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                        class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
                     </svg>
                     <span>My Attendance</span>
                 </a>
                 {% endif %}
-                <a href="/" class="btn btn-secondary">Dashboard</a>
+                <a href="/" class="btn btn-outline-secondary btn-sm px-3 rounded-pill">Dashboard</a>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <!-- Announcements Column -->
-    <div class="col-md-8">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white">
-                <h4 class="mb-0">Announcements</h4>
-            </div>
-            <div class="card-body bg-light">
+<!-- Navigation Tabs (Google Classroom Style) -->
+<ul class="nav nav-pills custom-class-pills mb-4 p-1.5 rounded-pill bg-white shadow-sm border" id="classTab"
+    role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill {% if active_tab == 'stream' %}active{% endif %}" id="stream-tab"
+            data-bs-toggle="tab" data-bs-target="#stream-pane" type="button" role="tab">
+            Stream & Discussions
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill {% if active_tab == 'assignments' %}active{% endif %}" id="assignments-tab"
+            data-bs-toggle="tab" data-bs-target="#assignments-pane" type="button" role="tab">
+            📝 Assignments ({{ assignments|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill {% if active_tab == 'materials' %}active{% endif %}" id="materials-tab"
+            data-bs-toggle="tab" data-bs-target="#materials-pane" type="button" role="tab">
+            📚 Materials ({{ materials|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill {% if active_tab == 'quizzes' %}active{% endif %}" id="quizzes-tab"
+            data-bs-toggle="tab" data-bs-target="#quizzes-pane" type="button" role="tab">
+            🎯 Quizzes & Tests ({{ quizzes|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill {% if active_tab == 'timetable' %}active{% endif %}" id="timetable-tab"
+            data-bs-toggle="tab" data-bs-target="#timetable-pane" type="button" role="tab">
+            🗓️ Schedule
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link rounded-pill {% if active_tab == 'people' %}active{% endif %}" id="people-tab"
+            data-bs-toggle="tab" data-bs-target="#people-pane" type="button" role="tab">
+            👥 People ({{ students|length }})
+        </button>
+    </li>
+</ul>
+
+<!-- Tab Content Panes -->
+<div class="tab-content" id="classTabContent">
+
+    <!-- TAB 1: STREAM & DISCUSSIONS -->
+    <div class="tab-pane fade {% if active_tab == 'stream' %}show active{% endif %}" id="stream-pane" role="tabpanel">
+        <div class="row">
+            <div class="col-lg-8">
                 {% if session.role == 'teacher' %}
-                <form action="/class/{{ class_info.id }}/announce" method="post" class="mb-4">
-                    <div class="mb-3">
-                        <textarea class="form-control" name="text" rows="3" placeholder="Post a new announcement..." required></textarea>
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                class="bi bi-pencil-square text-emerald" viewBox="0 0 16 16">
+                                <path
+                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd"
+                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                            </svg>
+                            <span>Share with your class</span>
+                        </h5>
+                        <form action="/class/{{ class_info.id }}/announce" method="post">
+                            <div class="mb-3">
+                                <textarea class="form-control rounded-3" name="text" rows="3"
+                                    placeholder="Announce something to your students..." required></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-capsule-emerald btn-sm px-4">Post
+                                    Announcement</button>
+                            </div>
+                        </form>
                     </div>
-                    <button type="submit" class="btn btn-primary">Post</button>
-                </form>
+                </div>
                 {% endif %}
 
-                <div class="list-group">
+                <!-- Announcements Feed with Comments -->
+                <div class="d-flex flex-column gap-3">
                     {% for a in announcements %}
-                    <div class="list-group-item list-group-item-action flex-column align-items-start mb-2 border rounded shadow-sm">
-                        <div class="d-flex w-100 justify-content-between">
-                            <small class="text-muted">{{ a.timestamp }}</small>
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="user-avatar-badge" style="width: 34px; height: 34px;">
+                                        📢
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-body">Class Announcement</div>
+                                        <small class="text-muted">{{ a.timestamp }}</small>
+                                    </div>
+                                </div>
+                                {% if session.role == 'teacher' %}
+                                <form action="/announcement/{{ a.id }}/delete" method="post"
+                                    onsubmit="return confirm('Delete this announcement?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0 p-1"
+                                        title="Delete Announcement">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path
+                                                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                            <path
+                                                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                        </svg>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+
+                            <p class="fs-6 my-3 text-body" style="white-space: pre-wrap;">{{ a.text }}</p>
+
+                            <!-- Discussion / Comments Thread -->
+                            <div class="mt-3 pt-3 border-top">
+                                <h6 class="text-muted small fw-bold text-uppercase mb-2">💬 Class Discussion & Doubts
+                                    ({{ a.comments|length }})</h6>
+
+                                <div class="d-flex flex-column gap-2 mb-3">
+                                    {% for c in a.comments %}
+                                    <div
+                                        class="p-2.5 rounded-3 bg-light-subtle border d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-bold text-sm">{{ c.name or c.username }}</span>
+                                                <span
+                                                    class="badge {% if c.role == 'teacher' %}bg-emerald text-white{% else %}bg-secondary-subtle text-muted{% endif %} rounded-pill px-2 py-0.5"
+                                                    style="font-size: 0.65rem;">{{ c.role }}</span>
+                                                <small class="text-muted" style="font-size: 0.72rem;">{{
+                                                    c.created_at|truncate(16, true, "") }}</small>
+                                            </div>
+                                            <p class="mb-0 mt-1 small text-body">{{ c.text }}</p>
+                                        </div>
+                                        {% if c.user_id == session.user_id or session.role == 'teacher' %}
+                                        <form action="/comment/{{ c.id }}/delete" method="post">
+                                            <button type="submit" class="btn btn-sm text-danger border-0 p-0"
+                                                title="Delete comment">&times;</button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Add Comment Form -->
+                                <form action="/announcement/{{ a.id }}/comment" method="post" class="d-flex gap-2">
+                                    <input type="text" name="comment_text"
+                                        class="form-control form-control-sm rounded-pill"
+                                        placeholder="Ask a doubt or add a class comment..." required>
+                                    <button type="submit"
+                                        class="btn btn-sm btn-outline-emerald rounded-pill px-3">Reply</button>
+                                </form>
+                            </div>
                         </div>
-                        <p class="mb-1 mt-2">{{ a.text }}</p>
                     </div>
                     {% else %}
-                    <p class="text-muted text-center">No announcements yet.</p>
+                    <div class="card shadow-sm border-0 p-5 text-center text-muted">
+                        <div class="fs-1 mb-2">📢</div>
+                        <h5>No announcements posted yet.</h5>
+                        <p class="small mb-0">Updates, syllabus notices, and discussion topics will appear here.</p>
+                    </div>
                     {% endfor %}
+                </div>
+            </div>
+
+            <!-- Side Widget Column -->
+            <div class="col-lg-4">
+                <!-- Upcoming Deadlines Widget -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-transparent fw-bold d-flex align-items-center gap-2">
+                        <span>⏳ Upcoming Assignments</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% set pending_assigns = assignments|selectattr('due_date')|list %}
+                            {% for asgn in pending_assigns[:4] %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <div>
+                                    <a href="/assignment/{{ asgn.id }}"
+                                        class="fw-semibold text-body text-decoration-none d-block text-truncate"
+                                        style="max-width: 180px;">{{ asgn.title }}</a>
+                                    <small class="text-danger fw-semibold">Due: {{ asgn.due_date|truncate(16, true, "")
+                                        }}</small>
+                                </div>
+                                <span class="badge bg-emerald-subtle text-emerald rounded-pill">{{ asgn.max_points }}
+                                    pts</span>
+                            </li>
+                            {% else %}
+                            <li class="list-group-item text-muted text-center p-3 small">No upcoming deadlines.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Quick Materials Widget -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-transparent fw-bold d-flex justify-content-between align-items-center">
+                        <span>📂 Recent Materials</span>
+                        <button class="btn btn-link btn-sm text-emerald p-0 text-decoration-none"
+                            onclick="document.getElementById('materials-tab').click()">View all</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for m in materials[:4] %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-2.5">
+                                <a href="/static/uploads/{{ m.file_path }}" target="_blank"
+                                    class="text-decoration-none text-truncate text-body small"
+                                    style="max-width: 75%;">📄 {{ m.filename }}</a>
+                                <a href="/static/uploads/{{ m.file_path }}" download
+                                    class="btn btn-sm btn-outline-secondary py-0 px-2 rounded-pill"
+                                    style="font-size: 0.72rem;">Get</a>
+                            </li>
+                            {% else %}
+                            <li class="list-group-item text-muted text-center p-3 small">No files uploaded.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Materials Column -->
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h4 class="mb-0">Materials</h4>
-            </div>
-            <div class="card-body">
-                {% if session.role == 'teacher' %}
-                <form action="/class/{{ class_info.id }}/upload" method="post" enctype="multipart/form-data" class="mb-4">
-                    <div class="mb-3">
-                        <input class="form-control form-control-sm" type="file" name="material" required>
-                    </div>
-                    <button type="submit" class="btn btn-sm btn-outline-primary w-100">Upload File</button>
-                </form>
-                <hr>
-                {% endif %}
+    <!-- TAB 2: ASSIGNMENTS & SUBMISSIONS -->
+    <div class="tab-pane fade {% if active_tab == 'assignments' %}show active{% endif %}" id="assignments-pane"
+        role="tabpanel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Classwork & Assignments</h4>
+            {% if session.role == 'teacher' %}
+            <button type="button" class="btn btn-capsule-emerald btn-sm px-3 d-flex align-items-center gap-1.5"
+                data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
+                    viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                </svg>
+                <span>Create Assignment</span>
+            </button>
+            {% endif %}
+        </div>
 
-                <ul class="list-group list-group-flush">
-                    {% for m in materials %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <a href="/static/uploads/{{ m.file_path }}" target="_blank" class="text-decoration-none text-truncate" style="max-width: 80%;">{{ m.filename }}</a>
-                        <span class="badge bg-secondary rounded-pill"><small>Download</small></span>
-                    </li>
-                    {% else %}
-                    <li class="list-group-item text-muted text-center">No materials uploaded.</li>
-                    {% endfor %}
-                </ul>
+        <div class="d-flex flex-column gap-3">
+            {% for asgn in assignments %}
+            <div class="card shadow-sm border-0 hover-shadow">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="user-avatar-badge bg-primary text-white mt-1"
+                                style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                📝
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">
+                                    <a href="/assignment/{{ asgn.id }}" class="text-body text-decoration-none">{{
+                                        asgn.title }}</a>
+                                </h5>
+                                <div class="d-flex flex-wrap align-items-center gap-2 text-muted small mb-2">
+                                    {% if asgn.due_date %}
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-2.5">⏰ Due: {{
+                                        asgn.due_date }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill px-2.5">No Due
+                                        Date</span>
+                                    {% endif %}
+                                    <span>• {{ asgn.max_points }} Points</span>
+                                    {% if asgn.file_path %}
+                                    <span>• 📎 Attachment included</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-muted small mb-0">{{ asgn.description|truncate(140, true, "...") if
+                                    asgn.description else "No instructions provided." }}</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            {% if session.role == 'teacher' %}
+                            <div class="d-flex align-items-center gap-2">
+                                <span
+                                    class="badge bg-success-subtle text-success rounded-pill px-3 py-1.5 fw-semibold">{{
+                                    asgn.submission_count }} Submitted</span>
+                                <span
+                                    class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1.5 fw-semibold">{{
+                                    asgn.graded_count }} Graded</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="/assignment/{{ asgn.id }}"
+                                    class="btn btn-sm btn-outline-emerald rounded-pill px-3">Grade & View</a>
+                                <form action="/assignment/{{ asgn.id }}/delete" method="post"
+                                    onsubmit="return confirm('Delete this assignment and all submissions?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2"
+                                        title="Delete">🗑️</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            {% if asgn.grade is not none %}
+                            <span class="badge bg-success text-white rounded-pill px-3 py-1.5 fs-6">Graded: {{
+                                asgn.grade }}/{{ asgn.max_points }}</span>
+                            {% elif asgn.submission_id %}
+                            <span
+                                class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1.5 fw-semibold">Turned
+                                In</span>
+                            {% else %}
+                            <span
+                                class="badge bg-warning-subtle text-warning rounded-pill px-3 py-1.5 fw-semibold">Assigned
+                                (Pending)</span>
+                            {% endif %}
+                            <a href="/assignment/{{ asgn.id }}" class="btn btn-sm btn-capsule-emerald px-4 mt-1">Open
+                                Assignment</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow-sm border-0 p-5 text-center text-muted">
+                <div class="fs-1 mb-2">📋</div>
+                <h5>No assignments assigned yet.</h5>
+                <p class="small mb-0">Assignments posted by your instructor will appear here with instructions and
+                    submission options.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- TAB 3: MATERIALS -->
+    <div class="tab-pane fade {% if active_tab == 'materials' %}show active{% endif %}" id="materials-pane"
+        role="tabpanel">
+        <div class="row">
+            {% if session.role == 'teacher' %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-transparent fw-bold">Upload Course Materials</div>
+                    <div class="card-body">
+                        <form action="/class/{{ class_info.id }}/upload" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label small text-muted">Select PDF, PPT, Word or Notes file</label>
+                                <input class="form-control rounded-3" type="file" name="material" required>
+                            </div>
+                            <button type="submit" class="btn btn-capsule-emerald btn-sm w-100 py-2">Upload to
+                                Class</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="{% if session.role == 'teacher' %}col-md-8{% else %}col-12{% endif %}">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-transparent fw-bold d-flex justify-content-between align-items-center">
+                        <span>Study Materials & Documents</span>
+                        <span class="badge bg-light text-muted border rounded-pill">{{ materials|length }} Files</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for m in materials %}
+                            <div
+                                class="list-group-item d-flex justify-content-between align-items-center p-3 hover-shadow">
+                                <div class="d-flex align-items-center gap-3 text-truncate">
+                                    <div class="fs-3">📄</div>
+                                    <div class="text-truncate">
+                                        <a href="/static/uploads/{{ m.file_path }}" target="_blank"
+                                            class="fw-bold text-body text-decoration-none d-block text-truncate">{{
+                                            m.filename }}</a>
+                                        <small class="text-muted">Uploaded: {{ m.upload_time }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="/static/uploads/{{ m.file_path }}" target="_blank"
+                                        class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
+                                    <a href="/static/uploads/{{ m.file_path }}" download
+                                        class="btn btn-sm btn-capsule-emerald px-3">Download</a>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="p-5 text-center text-muted">
+                                <div class="fs-1 mb-2">📁</div>
+                                <h6>No study materials uploaded yet.</h6>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- TAB 4: QUIZZES & EXAMS -->
+    <div class="tab-pane fade {% if active_tab == 'quizzes' %}show active{% endif %}" id="quizzes-pane" role="tabpanel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Quizzes & Online Tests</h4>
+            {% if session.role == 'teacher' %}
+            <button type="button" class="btn btn-capsule-emerald btn-sm px-3 d-flex align-items-center gap-1.5"
+                data-bs-toggle="modal" data-bs-target="#createQuizModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg"
+                    viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                </svg>
+                <span>Create Quiz</span>
+            </button>
+            {% endif %}
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+            {% for q in quizzes %}
+            <div class="card shadow-sm border-0 hover-shadow">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="user-avatar-badge bg-warning text-dark mt-1"
+                                style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                🎯
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">
+                                    <a href="/quiz/{{ q.id }}" class="text-body text-decoration-none">{{ q.title }}</a>
+                                </h5>
+                                <div class="d-flex flex-wrap align-items-center gap-2 text-muted small mb-2">
+                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill">{{
+                                        q.question_count }} Questions</span>
+                                    <span>• ⏱️ {{ q.time_limit_minutes }} Minutes</span>
+                                    <span>• Created: {{ q.created_at|truncate(10, true, "") }}</span>
+                                </div>
+                                <p class="text-muted small mb-0">{{ q.description if q.description else "Auto-graded
+                                    multiple choice questions." }}</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            {% if session.role == 'teacher' %}
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1.5">{{
+                                q.attempt_count }} Submissions</span>
+                            <div class="d-flex gap-2">
+                                <a href="/quiz/{{ q.id }}" class="btn btn-sm btn-outline-emerald rounded-pill px-3">View
+                                    Results</a>
+                                <form action="/quiz/{{ q.id }}/delete" method="post"
+                                    onsubmit="return confirm('Delete this quiz?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2"
+                                        title="Delete">🗑️</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            {% if q.attempt_id %}
+                            <span class="badge bg-success text-white rounded-pill px-3 py-1.5 fs-6">Score: {{ q.score
+                                }}/{{ q.total_points }}</span>
+                            <a href="/quiz/{{ q.id }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Review
+                                Answers</a>
+                            {% else %}
+                            <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-1.5">Not
+                                Attempted</span>
+                            <a href="/quiz/{{ q.id }}" class="btn btn-sm btn-capsule-emerald px-4">Take Quiz Now</a>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow-sm border-0 p-5 text-center text-muted">
+                <div class="fs-1 mb-2">🎯</div>
+                <h5>No online quizzes created yet.</h5>
+                <p class="small mb-0">Quizzes and auto-graded tests will appear here.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- TAB 5: TIMETABLE & SCHEDULE -->
+    <div class="tab-pane fade {% if active_tab == 'timetable' %}show active{% endif %}" id="timetable-pane"
+        role="tabpanel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Class Schedule Slots</h4>
+            {% if session.role == 'teacher' %}
+            <button type="button" class="btn btn-capsule-emerald btn-sm px-3" data-bs-toggle="modal"
+                data-bs-target="#addSlotModal">
+                + Add Time Slot
+            </button>
+            {% endif %}
+        </div>
+
+        <div class="row g-3">
+            {% for slot in timetable_slots %}
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <span class="badge bg-emerald-subtle text-emerald rounded-pill px-3 py-1 fw-bold">{{
+                            slot.day_of_week }}</span>
+                        {% if session.role == 'teacher' %}
+                        <form action="/timetable/delete/{{ slot.id }}" method="post">
+                            <button type="submit" class="btn btn-sm text-danger border-0 p-0"
+                                title="Delete Slot">&times;</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    <div class="mt-3">
+                        <div class="fs-5 fw-bold text-body">⏰ {{ slot.start_time }} - {{ slot.end_time }}</div>
+                        <div class="text-muted small mt-1">📍 Room: {{ slot.room_override or class_info.room or 'Main
+                            Classroom' }}</div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="card shadow-sm border-0 p-5 text-center text-muted">
+                    <div class="fs-1 mb-2">🗓️</div>
+                    <h6>No specific schedule slots configured for this class yet.</h6>
+                    <a href="/timetable" class="btn btn-sm btn-outline-emerald rounded-pill px-3 mt-2">Open Weekly
+                        Timetable</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- TAB 6: PEOPLE & ROSTER -->
+    <div class="tab-pane fade {% if active_tab == 'people' %}show active{% endif %}" id="people-pane" role="tabpanel">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent fw-bold d-flex justify-content-between align-items-center">
+                <span>Class Roster ({{ students|length }} Enrolled)</span>
+                {% if session.role == 'teacher' %}
+                <a href="/class/{{ class_info.id }}/attendance"
+                    class="btn btn-sm btn-outline-emerald rounded-pill px-3">Manage Students</a>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>App / Roll No</th>
+                                <th>Branch</th>
+                                <th>Classroom</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in students %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td class="fw-bold d-flex align-items-center gap-2">
+                                    <div class="user-avatar-badge"
+                                        style="width: 28px; height: 28px; font-size: 0.75rem;">
+                                        {{ (s.name or s.username)[0]|upper }}
+                                    </div>
+                                    <span>{{ s.name or s.username }}</span>
+                                </td>
+                                <td><code>{{ s.application_number or '-' }}</code></td>
+                                <td>{{ s.branch or '-' }}</td>
+                                <td>{{ s.classroom or '-' }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted p-4">No students enrolled yet. Share join
+                                    code <code>{{ class_info.join_code }}</code> to enroll.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<!-- MODALS FOR TEACHER -->
+{% if session.role == 'teacher' %}
+<!-- Create Assignment Modal -->
+<div class="modal fade" id="createAssignmentModal" tabindex="-1" aria-labelledby="createAssignmentModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content glass-dropdown border">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="createAssignmentModalLabel">📝 Create New Assignment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/class/{{ class_info.id }}/assignments/create" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Assignment Title *</label>
+                        <input type="text" name="title" class="form-control rounded-3"
+                            placeholder="e.g. Unit 3 Problem Set & Code Implementation" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Instructions / Description</label>
+                        <textarea name="description" class="form-control rounded-3" rows="4"
+                            placeholder="Detail the questions, instructions, or submission requirements..."></textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Total Points</label>
+                            <input type="number" name="max_points" class="form-control rounded-3" value="100" min="1"
+                                max="1000">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Due Date & Time</label>
+                            <input type="datetime-local" name="due_date" class="form-control rounded-3">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Attach Reference File / Worksheet (Optional)</label>
+                        <input type="file" name="assignment_file" class="form-control rounded-3">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-3"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-capsule-emerald px-4">Publish Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Create Quiz Modal -->
+<div class="modal fade" id="createQuizModal" tabindex="-1" aria-labelledby="createQuizModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content glass-dropdown border">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="createQuizModalLabel">🎯 Create MCQ Online Quiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/class/{{ class_info.id }}/quizzes/create" method="post">
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Quiz Title *</label>
+                            <input type="text" name="title" class="form-control rounded-3"
+                                placeholder="e.g. Midterm Practice Quiz" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Time Limit (Minutes)</label>
+                            <input type="number" name="time_limit_minutes" class="form-control rounded-3" value="15"
+                                min="1">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <input type="text" name="description" class="form-control rounded-3"
+                            placeholder="Brief instructions for students">
+                    </div>
+
+                    <hr class="my-3">
+                    <h6 class="fw-bold mb-3">Questions (MCQs)</h6>
+
+                    {% for i in range(1, 4) %}
+                    <div class="p-3 mb-3 rounded-3 border bg-light-subtle">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold text-emerald">Question #{{ i }}</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <label class="small text-muted mb-0">Points:</label>
+                                <input type="number" name="q_{{ i }}_points" value="1" min="1"
+                                    class="form-control form-control-sm" style="width: 60px;">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" name="q_{{ i }}_text" class="form-control form-control-sm"
+                                placeholder="Question text..." {% if i==1 %}required{% endif %}>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <input type="text" name="q_{{ i }}_a" class="form-control form-control-sm"
+                                    placeholder="Option A" {% if i==1 %}required{% endif %}>
+                            </div>
+                            <div class="col-6">
+                                <input type="text" name="q_{{ i }}_b" class="form-control form-control-sm"
+                                    placeholder="Option B" {% if i==1 %}required{% endif %}>
+                            </div>
+                            <div class="col-6">
+                                <input type="text" name="q_{{ i }}_c" class="form-control form-control-sm"
+                                    placeholder="Option C">
+                            </div>
+                            <div class="col-6">
+                                <input type="text" name="q_{{ i }}_d" class="form-control form-control-sm"
+                                    placeholder="Option D">
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small fw-semibold text-muted">Correct Option:</span>
+                            <select name="q_{{ i }}_correct" class="form-select form-select-sm" style="width: 100px;">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-3"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-capsule-emerald px-4">Publish Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Timetable Slot Modal -->
+<div class="modal fade" id="addSlotModal" tabindex="-1" aria-labelledby="addSlotModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content glass-dropdown border">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="addSlotModalLabel">🗓️ Add Timetable Slot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/timetable/add" method="post">
+                <input type="hidden" name="class_id" value="{{ class_info.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Day of Week *</label>
+                        <select name="day_of_week" class="form-select rounded-3" required>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </div>
+                    <div class="row g-2 mb-1">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Start Time *</label>
+                            <input type="time" name="start_time" id="cvStartTime"
+                                class="form-control rounded-3 time-autofill" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">End Time *</label>
+                            <input type="time" name="end_time" id="cvEndTime"
+                                class="form-control rounded-3 time-autofill" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-2">
+                        <small class="text-muted fw-semibold d-block mb-1">Quick Presets — focus a time field then
+                            click:</small>
+                        <div class="d-flex flex-wrap gap-1">
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="08:00" style="font-size:0.72rem;">08:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="09:00" style="font-size:0.72rem;">09:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="10:00" style="font-size:0.72rem;">10:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="11:00" style="font-size:0.72rem;">11:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="12:00" style="font-size:0.72rem;">12:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="13:00" style="font-size:0.72rem;">13:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="14:00" style="font-size:0.72rem;">14:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="15:00" style="font-size:0.72rem;">15:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="16:00" style="font-size:0.72rem;">16:00</button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm rounded-pill px-2 py-0 time-preset"
+                                data-time="17:00" style="font-size:0.72rem;">17:00</button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Room Override (Optional)</label>
+                        <input type="text" name="room_override" class="form-control rounded-3"
+                            placeholder="{{ class_info.room or 'Room number' }}">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-secondary rounded-pill px-3"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-capsule-emerald px-4">Save Slot</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        var lastFocused = null;
+        document.querySelectorAll('.time-autofill').forEach(function (inp) {
+            inp.addEventListener('focus', function () { lastFocused = inp; });
+            inp.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (inp.value && /^\d{1,2}$/.test(inp.value)) inp.value = inp.value.padStart(2, '0') + ':00';
+                    var all = Array.from(document.querySelectorAll('.time-autofill'));
+                    var idx = all.indexOf(inp);
+                    if (idx >= 0 && idx < all.length - 1) all[idx + 1].focus();
+                }
+            });
+            inp.addEventListener('blur', function () {
+                if (inp.value && /^\d{1,2}$/.test(inp.value)) inp.value = inp.value.padStart(2, '0') + ':00';
+            });
+        });
+        document.querySelectorAll('.time-preset').forEach(function (btn) {
+            btn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+            btn.addEventListener('click', function () {
+                var t = this.dataset.time;
+                if (lastFocused) { lastFocused.value = t; lastFocused.focus(); }
+                else { var f = document.querySelector('.time-autofill'); if (f) { f.value = t; f.focus(); } }
+            });
+        });
+    })();
+</script>
+{% endif %}
+
 {% endblock %}

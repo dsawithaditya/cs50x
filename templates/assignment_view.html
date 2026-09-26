@@ -1,0 +1,229 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="/class/{{ assignment.class_id }}?tab=assignments" class="btn btn-outline-secondary btn-sm rounded-pill d-inline-flex align-items-center gap-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        <span>Back to {{ assignment.class_name }}</span>
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Assignment Details & Instructions -->
+    <div class="{% if session.role == 'teacher' %}col-lg-5{% else %}col-lg-8{% endif %}">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-emerald-subtle text-emerald rounded-pill px-3 py-1 fw-semibold">{{ assignment.class_name }}</span>
+                    <span class="badge bg-light text-muted border rounded-pill">{{ assignment.max_points }} Points</span>
+                </div>
+
+                <h3 class="fw-bold mb-2">{{ assignment.title }}</h3>
+                <div class="text-muted small mb-4">
+                    {% if assignment.due_date %}
+                        <span class="text-danger fw-semibold">⏰ Due: {{ assignment.due_date }}</span>
+                    {% else %}
+                        <span>No deadline set</span>
+                    {% endif %}
+                    <span>• Posted {{ assignment.created_at|truncate(10, true, "") }}</span>
+                </div>
+
+                <h6 class="fw-bold text-uppercase small text-muted mb-2">Instructions</h6>
+                <div class="p-3 bg-light-subtle rounded-3 border mb-4 text-body" style="white-space: pre-wrap; font-size: 0.95rem; min-height: 120px;">
+                    {{ assignment.description or "No written instructions provided by instructor." }}
+                </div>
+
+                {% if assignment.file_path %}
+                <div class="p-3 rounded-3 border bg-light d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2 text-truncate">
+                        <span class="fs-4">📎</span>
+                        <span class="fw-semibold text-truncate small">Reference Attachment</span>
+                    </div>
+                    <a href="/static/uploads/{{ assignment.file_path }}" download class="btn btn-sm btn-capsule-emerald px-3">Download File</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Student Submission Dropzone OR Teacher Grading Table -->
+    <div class="{% if session.role == 'teacher' %}col-lg-7{% else %}col-lg-4{% endif %}">
+        
+        {% if session.role == 'student' %}
+        <!-- Student Submission Card -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent fw-bold d-flex justify-content-between align-items-center">
+                <span>Your Work</span>
+                {% if my_submission and my_submission.grade is not none %}
+                    <span class="badge bg-success rounded-pill px-3 py-1">Graded: {{ my_submission.grade }}/{{ assignment.max_points }}</span>
+                {% elif my_submission %}
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1">Turned In</span>
+                {% else %}
+                    <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-1">Assigned</span>
+                {% endif %}
+            </div>
+            <div class="card-body p-4">
+                {% if my_submission and my_submission.grade is not none %}
+                <!-- Graded Result Card -->
+                <div class="alert alert-success border-0 rounded-3 mb-3 p-3">
+                    <div class="fw-bold fs-5 mb-1">🎉 Score: {{ my_submission.grade }} / {{ assignment.max_points }}</div>
+                    {% if my_submission.feedback %}
+                        <div class="small mt-2"><strong>Teacher Feedback:</strong> {{ my_submission.feedback }}</div>
+                    {% endif %}
+                    <small class="d-block text-muted mt-2">Graded on: {{ my_submission.graded_at }}</small>
+                </div>
+                {% endif %}
+
+                {% if my_submission %}
+                <div class="p-3 bg-light rounded-3 border mb-3">
+                    <div class="small text-muted mb-1">Submitted on {{ my_submission.submitted_at }}:</div>
+                    {% if my_submission.submission_text %}
+                        <p class="mb-2 text-body small" style="white-space: pre-wrap;">{{ my_submission.submission_text }}</p>
+                    {% endif %}
+                    {% if my_submission.file_path %}
+                        <a href="/static/uploads/{{ my_submission.file_path }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">📄 View Submitted File</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Submission Form -->
+                <form action="/assignment/{{ assignment.id }}/submit" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted">Text Response / Notes</label>
+                        <textarea name="submission_text" rows="3" class="form-control rounded-3" placeholder="Type your answers or notes here...">{{ my_submission.submission_text if my_submission else '' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-muted">Upload Document / Code File</label>
+                        <input type="file" name="submission_file" class="form-control rounded-3">
+                    </div>
+                    <button type="submit" class="btn btn-capsule-emerald w-100 py-2">
+                        {{ 'Resubmit Assignment' if my_submission else 'Turn In Assignment' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Teacher Submissions Grading Center -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent fw-bold d-flex justify-content-between align-items-center">
+                <span>Student Submissions</span>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-success-subtle text-success rounded-pill">{{ submitted_count }}/{{ total_students }} Submitted</span>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill">{{ graded_count }} Graded</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Student</th>
+                                <th>Status</th>
+                                <th>Submission</th>
+                                <th>Grade</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in students %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-body">{{ s.name or s.username }}</div>
+                                    <small class="text-muted"><code>{{ s.application_number or '-' }}</code></small>
+                                </td>
+                                <td>
+                                    {% if s.grade is not none %}
+                                        <span class="badge bg-success rounded-pill">Graded</span>
+                                    {% elif s.submission_id %}
+                                        <span class="badge bg-primary rounded-pill">Submitted</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary-subtle text-muted rounded-pill">Missing</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s.submission_id %}
+                                        {% if s.file_path %}
+                                            <a href="/static/uploads/{{ s.file_path }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2 rounded-pill mb-1 d-inline-block">📄 File</a>
+                                        {% endif %}
+                                        {% if s.submission_text %}
+                                            <div class="small text-muted text-truncate" style="max-width: 120px;" title="{{ s.submission_text }}">{{ s.submission_text }}</div>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s.grade is not none %}
+                                        <span class="fw-bold text-emerald">{{ s.grade }}/{{ assignment.max_points }}</span>
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if s.submission_id %}
+                                    <button type="button" class="btn btn-sm btn-outline-emerald rounded-pill px-2.5" data-bs-toggle="modal" data-bs-target="#gradeModal{{ s.submission_id }}">
+                                        {{ 'Edit Grade' if s.grade is not none else 'Grade' }}
+                                    </button>
+
+                                    <!-- Grade Modal -->
+                                    <div class="modal fade" id="gradeModal{{ s.submission_id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content glass-dropdown border">
+                                                <div class="modal-header border-0 pb-0">
+                                                    <h5 class="modal-title fw-bold">Grade {{ s.name or s.username }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="/submission/{{ s.submission_id }}/grade" method="post">
+                                                    <div class="modal-body">
+                                                        {% if s.file_path %}
+                                                        <div class="mb-3 p-2 bg-light rounded-3 d-flex justify-content-between align-items-center">
+                                                            <span class="small fw-semibold">Submitted File:</span>
+                                                            <a href="/static/uploads/{{ s.file_path }}" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3">View File</a>
+                                                        </div>
+                                                        {% endif %}
+                                                        {% if s.submission_text %}
+                                                        <div class="mb-3">
+                                                            <label class="form-label small text-muted">Student Response</label>
+                                                            <div class="p-2.5 bg-light rounded-3 small text-body" style="white-space: pre-wrap;">{{ s.submission_text }}</div>
+                                                        </div>
+                                                        {% endif %}
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Score (Out of {{ assignment.max_points }}) *</label>
+                                                            <input type="number" step="0.5" name="grade" class="form-control rounded-3" value="{{ s.grade or '' }}" max="{{ assignment.max_points }}" min="0" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Feedback Comments</label>
+                                                            <textarea name="feedback" rows="3" class="form-control rounded-3" placeholder="Provide encouraging remarks or correction notes...">{{ s.feedback or '' }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-0 pt-0">
+                                                        <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-capsule-emerald px-4">Save Grade</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <button class="btn btn-sm btn-light rounded-pill px-2.5 text-muted" disabled>No Submission</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted p-4">No enrolled students in this class.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

@@ -51,11 +51,11 @@
                     <td class="ps-4">{{ r.date }}</td>
                     <td>
                         {% if r.status == 'Present' %}
-                            <span class="badge bg-success">Present</span>
+                        <span class="badge bg-success">Present</span>
                         {% elif r.status == 'Late' %}
-                            <span class="badge bg-warning text-dark">Late</span>
+                        <span class="badge bg-warning text-dark">Late</span>
                         {% else %}
-                            <span class="badge bg-danger">Absent</span>
+                        <span class="badge bg-danger">Absent</span>
                         {% endif %}
                     </td>
                 </tr>
