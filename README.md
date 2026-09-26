@@ -1,5 +1,5 @@
 # ClassConnect
-#### Video Demo: https://youtu.be/c5fJBvW4AAg
+#### Video Demo: 
 #### Description:
 
 **ClassConnect** is a comprehensive, web-based classroom management and digital attendance portal engineered using **Python (Flask)**, **SQLite**, **HTML5/Jinja2**, **Bootstrap 5**, and **JavaScript**. Developed as a capstone project for CS50x, ClassConnect addresses the everyday administrative frictions faced by educational institutions, instructors, and students. In traditional classroom environments, tracking daily attendance, distributing study resources, broadcasting announcements, and maintaining verified student profiles often require disparate tools, spreadsheets, or physical paper rosters. ClassConnect bridges this divide by providing a unified, intuitive, and responsive hub where academic administration and communication happen seamlessly in real-time.
